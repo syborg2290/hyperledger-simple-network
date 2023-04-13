@@ -1,0 +1,12 @@
+# channel-artifacts/*
+
+
+# .vscode
+
+application/node_modules/*
+web/node_modules/*
+
+
+# !channel-artifacts/.gitkeep
+chaincode/my_chaincode/vendor
+!chaincode/my_chaincode/vendor/.gitkeep

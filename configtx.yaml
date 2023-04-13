@@ -1,0 +1,220 @@
+Organizations:
+    - &OrdererOrg
+        Name: OrdererOrg
+        ID: OrdererMSP
+        MSPDir: ./crypto-material/ordererOrganizations/example.com/msp
+
+        Policies:
+            Readers:
+                Type: Signature
+                Rule: "OR('OrdererMSP.member')"
+            Writers:
+                Type: Signature
+                Rule: "OR('OrdererMSP.member')"
+            Admins:
+                Type: Signature
+                Rule: "OR('OrdererMSP.admin')"
+
+        OrdererEndpoints:
+            - orderer.example.com:7050
+
+    - &Org1
+        Name: HospitalMSP
+        ID: HospitalMSP
+        MSPDir: ./crypto-material/peerOrganizations/hospital.example.com/msp
+
+        Policies:
+            Readers:
+                Type: Signature
+                Rule: "OR('HospitalMSP.admin', 'HospitalMSP.peer', 'HospitalMSP.client')"
+            Writers:
+                Type: Signature
+                Rule: "OR('HospitalMSP.admin', 'HospitalMSP.client')"
+            Admins:
+                Type: Signature
+                Rule: "OR('HospitalMSP.admin')"
+            Endorsement:
+                Type: Signature
+                Rule: "OR('HospitalMSP.peer')"
+    - &Org2
+        Name: PatientMSP
+        ID: PatientMSP
+        MSPDir: ./crypto-material/peerOrganizations/patient.example.com/msp
+
+        Policies:
+            Readers:
+                Type: Signature
+                Rule: "OR('PatientMSP.admin', 'PatientMSP.peer', 'PatientMSP.client')"
+            Writers:
+                Type: Signature
+                Rule: "OR('PatientMSP.admin', 'PatientMSP.client')"
+            Admins:
+                Type: Signature
+                Rule: "OR('PatientMSP.admin')"
+            Endorsement:
+                Type: Signature
+                Rule: "OR('PatientMSP.peer')"
+    - &Org3
+        Name: LaboratoryMSP
+        ID: PharmacyMSP
+        MSPDir: ./crypto-material/peerOrganizations/pharmacy.example.com/msp
+
+        Policies:
+            Readers:
+                Type: Signature
+                Rule: "OR('PharmacyMSP.admin', 'PharmacyMSP.peer', 'PharmacyMSP.client')"
+            Writers:
+                Type: Signature
+                Rule: "OR('PharmacyMSP.admin', 'PharmacyMSP.client')"
+            Admins:
+                Type: Signature
+                Rule: "OR('PharmacyMSP.admin')"
+            Endorsement:
+                Type: Signature
+                Rule: "OR('PharmacyMSP.peer')" 
+    - &Org4
+        Name: LaboratoryMSP
+        ID: LaboratoryMSP
+        MSPDir: ./crypto-material/peerOrganizations/laboratory.example.com/msp
+
+        Policies:
+            Readers:
+                Type: Signature
+                Rule: "OR('LaboratoryMSP.admin', 'LaboratoryMSP.peer', 'LaboratoryMSP.client')"
+            Writers:
+                Type: Signature
+                Rule: "OR('LaboratoryMSP.admin', 'LaboratoryMSP.client')"
+            Admins:
+                Type: Signature
+                Rule: "OR('LaboratoryMSP.admin')"
+            Endorsement:
+                Type: Signature
+                Rule: "OR('LaboratoryMSP.peer')"
+    - &Org5
+        Name: InsuranceMSP
+        ID: InsuranceMSP
+        MSPDir: ./crypto-material/peerOrganizations/laboratory.example.com/msp
+
+        Policies:
+            Readers:
+                Type: Signature
+                Rule: "OR('InsuranceMSP.admin', 'InsuranceMSP.peer', 'InsuranceMSP.client')"
+            Writers:
+                Type: Signature
+                Rule: "OR('InsuranceMSP.admin', 'InsuranceMSP.client')"
+            Admins:
+                Type: Signature
+                Rule: "OR('InsuranceMSP.admin')"
+            Endorsement:
+                Type: Signature
+                Rule: "OR('InsuranceMSP.peer')"                                                  
+
+
+
+Capabilities:
+    Channel: &ChannelCapabilities
+        V2_0: true
+
+    Orderer: &OrdererCapabilities
+        V2_0: true
+
+    Application: &ApplicationCapabilities
+        V2_0: true
+
+
+
+Application: &ApplicationDefaults
+
+    Organizations:
+
+    Policies:
+        Readers:
+            Type: ImplicitMeta
+            Rule: "ANY Readers"
+        Writers:
+            Type: ImplicitMeta
+            Rule: "ANY Writers"
+        Admins:
+            Type: ImplicitMeta
+            Rule: "MAJORITY Admins"
+        LifecycleEndorsement:
+            Type: ImplicitMeta
+            Rule: "MAJORITY Endorsement"
+        Endorsement:
+            Type: ImplicitMeta
+            Rule: "MAJORITY Endorsement"
+
+    Capabilities:
+        <<: *ApplicationCapabilities
+
+
+Orderer: &OrdererDefaults
+
+    OrdererType: etcdraft
+    Addresses:
+        - orderer.example.com:7050
+
+    EtcdRaft:
+        Consenters:
+        - Host: orderer.example.com
+          Port: 7050
+          ClientTLSCert: ./crypto-material/ordererOrganizations/example.com/orderers/orderer.example.com/tls/server.crt
+          ServerTLSCert: ./crypto-material/ordererOrganizations/example.com/orderers/orderer.example.com/tls/server.crt
+
+    BatchTimeout: 2s
+    BatchSize:
+        MaxMessageCount: 10
+        AbsoluteMaxBytes: 99 MB
+        PreferredMaxBytes: 512 KB
+
+    Organizations:
+    Policies:
+        Readers:
+            Type: ImplicitMeta
+            Rule: "ANY Readers"
+        Writers:
+            Type: ImplicitMeta
+            Rule: "ANY Writers"
+        Admins:
+            Type: ImplicitMeta
+            Rule: "MAJORITY Admins"
+        BlockValidation:
+            Type: ImplicitMeta
+            Rule: "ANY Writers"
+
+
+
+Channel: &ChannelDefaults
+    Policies:
+        Readers:
+            Type: ImplicitMeta
+            Rule: "ANY Readers"
+        Writers:
+            Type: ImplicitMeta
+            Rule: "ANY Writers"
+        Admins:
+            Type: ImplicitMeta
+            Rule: "MAJORITY Admins"
+
+    Capabilities:
+        <<: *ChannelCapabilities
+
+
+
+Profiles:
+    OneOrgApplicationGenesis:
+        <<: *ChannelDefaults
+        Orderer:
+            <<: *OrdererDefaults
+            Organizations:
+                - *OrdererOrg
+            Capabilities: *OrdererCapabilities
+        Application:
+            <<: *ApplicationDefaults
+            Organizations:
+                - *Org1
+                - *Org2
+                - *Org3
+                - *Org4
+                - *Org5
+            Capabilities: *ApplicationCapabilities
